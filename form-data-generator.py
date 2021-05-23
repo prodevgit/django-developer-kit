@@ -3,6 +3,28 @@ import os
 import sys
 from os import path
 from form_data_server import start_server
+from db_operations import SettingsDb
+
+#SQLite DB SETUP
+db = SettingsDb()
+# conn.execute('''CREATE TABLE SETTINGS
+#          (ID INT PRIMARY KEY     NOT NULL,
+#          NAME           TEXT    NOT NULL,
+#          IS_FIELD           INT     NOT NULL,
+#          IS_ENABLED        INT NOT NULL
+#          );''');
+# conn.execute("INSERT INTO SETTINGS (ID,NAME,IS_FIELD,IS_ENABLED) \
+#       VALUES (1, 'created_by', 1, 1 );");
+# conn.commit()
+# cursor = conn.execute("SELECT id, name, is_field, is_enabled from SETTINGS")
+# for row in cursor:
+#     print(row)
+
+#     print("ID = ", row[0])
+#     print("NAME = ", row[1])
+#     print("ADDRESS = ", row[2])
+#     print("SALARY = ", row[3], "\n")
+# conn.close()
 #DJANGO ENVIRONMENT SETUP
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 APP_NAME="EPMS"
@@ -48,7 +70,6 @@ def models_to_json(models):
     parent_json_dict ={}
     for model in models:
         for i in model._meta.get_fields():
-            print(i)
             if type(i) != ManyToOneRel and type(i) != OneToOneRel and type(i) != ManyToManyRel:
                 sub_json_dict[(str(i).rsplit(".",1)[1])]=''
         parent_json_dict[str(model).rsplit('.',1)[1].split("'")[0]]=json.dumps(sub_json_dict).replace(',',',<br>')
