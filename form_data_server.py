@@ -7,23 +7,7 @@ hostName = "localhost"
 serverPort = 2500
 
 class Server(BaseHTTPRequestHandler):
-    # def do_GET(self):
-    #     self.send_response(200)
-    #     self.send_header("Content-type", "text/html")
-    #     self.end_headers()
-        # self.wfile.write(bytes('<html>'
-        #                        '<head>'
-        #                        '<title>Django Model Form Data</title>'
-        #                        '<meta name="viewport" content="width=device-width, initial-scale=1.0>'
-        #                        '<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">'
-        #                        '</head>', 'utf-8'))
-        # self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-        # self.wfile.write(bytes("<body>", "utf-8"))
-        # self.wfile.write(bytes('<div class ="container"><h1>Hello, world!</h1></div>', "utf-8"))
-        # self.wfile.write(bytes("</body></html>", "utf-8"))
-        # with open("template.html") as f:
-        #     for line in f:
-        #         self.wfile.write(bytes(line.rstrip("\n"), "utf-8"))
+    modelData = None
 
     def do_GET(self):
         global mimetype
@@ -71,6 +55,8 @@ class Server(BaseHTTPRequestHandler):
                 self.send_header('Content-type', mimetype)
                 self.end_headers()
                 self.wfile.write(f.read())
+                for i in self.wfile:
+                    print(i)
                 f.close()
                 print(os.getcwd() + self.path)
             return
@@ -78,7 +64,7 @@ class Server(BaseHTTPRequestHandler):
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
 
-    def setModelsData(self,modelHtml):
+    def setModelsData(self,modelData):
         pass
 
 if __name__ == "__main__":

@@ -1,6 +1,12 @@
+import json
 import os
 import re
 #DJANGO ENVIRONMENT SETUP
+from django.db.models import ManyToOneRel
+from django.template import Template, Context
+from django.utils.encoding import smart_str
+from django.utils.safestring import SafeText
+
 APP_NAME="EPMS"
 DJANGO_DIR = os.getcwd().rsplit('/',1)[0]
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"{APP_NAME}.settings")
@@ -53,14 +59,36 @@ def get_django_models(installed_apps):
             django_models.append(model)
     return django_models
 
-def model_to_json(model):
-    for i in model._meta.get_fields():
-        print(i)
+def models_to_json(models):
+    sub_json_dict = {}
+    parent_json_dict ={}
+    for model in models:
+        for i in model._meta.get_fields():
+            if(type(i)!=ManyToOneRel):
+                sub_json_dict[(str(i).rsplit(".",1)[1])]=''
+        parent_json_dict[str(model).rsplit('.',1)[1].split("'")[0]]=json.dumps(sub_json_dict)
+        sub_json_dict={}
+    return parent_json_dict
+
+def make_model_tabs_html():
+    pass
+
+def get_template(data):
+    html_template_file = open("template/index.html", "r")
+    body_template_html = Template(html_template_file.read())
+    context_data = Context(data)
+    body_template_html = body_template_html.render(context_data)
+    content = smart_str(body_template_html)
+    html_stripped = ' '.join(str(smart_str(content)).split())
+    html = SafeText(html_stripped)
+    file = open("index.html", "w")
+    file.write(html)
+    return html
 
 def main():
     setup()
     django_user_apps = get_django_apps()
     django_user_models = get_django_models(django_user_apps)
-    model_to_json(django_user_models[3])
-
+    json_dict = models_to_json(django_user_models)
+    get_template({"json_model_data":json_dict})
 main()
