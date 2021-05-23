@@ -1,15 +1,17 @@
 import json
 import os
-import re
+import sys
+from os import path
+from form_data_server import start_server
 #DJANGO ENVIRONMENT SETUP
-from django.db.models import ManyToOneRel
-from django.template import Template, Context
-from django.utils.encoding import smart_str
-from django.utils.safestring import SafeText
-
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 APP_NAME="EPMS"
 DJANGO_DIR = os.getcwd().rsplit('/',1)[0]
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"{APP_NAME}.settings")
+from django.db.models import ManyToOneRel, OneToOneRel, ManyToManyRel
+from django.template import Template, Context
+from django.utils.encoding import smart_str
+from django.utils.safestring import SafeText
 from django.apps import apps
 from django.conf import settings
 from django.urls import set_script_prefix
@@ -24,9 +26,6 @@ def setup():
     settings.DATABASES={}
     apps.populate(settings.INSTALLED_APPS)
 
-
-# EXCLUDE = ['site-packages']
-
 def get_django_apps():
     installed_apps = [app for app in settings.INSTALLED_APPS
                       if not app.startswith("django.")]
@@ -35,21 +34,6 @@ def get_django_apps():
         if os.path.exists(DJANGO_DIR+'/'+app):
             cleaned_apps.append(app)
     return cleaned_apps
-
-# def get_django_models(model_files):
-#     model_list = []
-#     print(model_files)
-#     class_regex_string=None
-#     for file in model_files:
-#         with open(file) as f:
-#             for line in f:
-#                 class_regex_string = re.search("^class\s\w*[(]", line.rstrip("\n"))
-#                 if(class_regex_string):
-#                     model_list.append(class_regex_string.string)
-#
-#     print(model_list)
-#                 # break
-#     return model_list
 
 def get_django_models(installed_apps):
     django_models = []
@@ -64,9 +48,10 @@ def models_to_json(models):
     parent_json_dict ={}
     for model in models:
         for i in model._meta.get_fields():
-            if(type(i)!=ManyToOneRel):
+            print(i)
+            if type(i) != ManyToOneRel and type(i) != OneToOneRel and type(i) != ManyToManyRel:
                 sub_json_dict[(str(i).rsplit(".",1)[1])]=''
-        parent_json_dict[str(model).rsplit('.',1)[1].split("'")[0]]=json.dumps(sub_json_dict)
+        parent_json_dict[str(model).rsplit('.',1)[1].split("'")[0]]=json.dumps(sub_json_dict).replace(',',',<br>')
         sub_json_dict={}
     return parent_json_dict
 
@@ -91,4 +76,6 @@ def main():
     django_user_models = get_django_models(django_user_apps)
     json_dict = models_to_json(django_user_models)
     get_template({"json_model_data":json_dict})
+
+    start_server()
 main()

@@ -49,25 +49,20 @@ class Server(BaseHTTPRequestHandler):
                 sendReply = True
 
             if sendReply == True:
-                # Open the static file requested and send it
                 f = open(os.getcwd() + self.path, 'rb')
                 self.send_response(200)
                 self.send_header('Content-type', mimetype)
                 self.end_headers()
                 self.wfile.write(f.read())
-                for i in self.wfile:
-                    print(i)
                 f.close()
                 print(os.getcwd() + self.path)
             return
 
-        except IOError:
-            self.send_error(404, 'File Not Found: %s' % self.path)
+        except Exception as e:
+            self.send_error(404, 'Error: %s' % e)
 
-    def setModelsData(self,modelData):
-        pass
-
-if __name__ == "__main__":
+def start_server():
+    # if __name__ == "__main__":
     webServer = HTTPServer((hostName, serverPort), Server)
     print("Server started http://%s:%s" % (hostName, serverPort))
 
