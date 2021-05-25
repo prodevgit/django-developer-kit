@@ -1,44 +1,24 @@
 import os
-import platform
-import shutil
+from glob import glob
 
-VIRTUALENV = None
+root_dir = os.getcwd().rsplit('/', 1)[0]
+django_dir = None
+for dir in os.listdir(root_dir):
+    try:
+        if 'manage.py' in os.listdir(f"{root_dir}/{dir}"):
+            django_dir = f"{root_dir}/{dir}"
+            break
+    except NotADirectoryError:
+        pass
 
-#Files Check
-status = os.system(f'cat {os.getcwd()}/requirements.txt')
-if(status!=0):
-    print("Requirements.txt not found")
-    exit(status)
+if django_dir == None:
+    print("Django project not found. Place this folder outside django project folder and rerun")
+    exit()
 
-if platform.system()=="Linux":
-
-    if shutil.which('pip') == None :
-        os.system(f'sudo -S apt install python3-pip',)
-    if shutil.which('virtualenv') == None:
-            os.system(f'sudo -S apt install python3-virtualenv')
-            os.system(f'sudo -S apt install python3-venv')
-    else:
-        if 'env' in os.listdir(os.getcwd()):
-            if 'activate' in os.listdir(f"{os.getcwd()}/env/bin"):
-                print("Virtual env exists")
-                print(os.system(f'sudo -S env/bin/easy_install `cat {os.getcwd()}/requirements.txt`'))
-        else:
-            os.system('sudo -S python3 -m venv env')
-
-    root_dir = os.getcwd().rsplit('/', 1)[0]
-    django_dir = None
-    for dir in os.listdir(root_dir):
-        try:
-            if 'manage.py' in os.listdir(f"{root_dir}/{dir}"):
-                django_dir = f"{root_dir}/{dir}"
-                break
-        except NotADirectoryError:
-            pass
-
-    if django_dir == None:
-        print('#####################\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-        print("Django project not found. Place this folder outside django project folder and rerun")
-        exit()
-
-    print('#####################\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-    os.system(f'env/bin/python3 form-data-generator.py')
+#Virtual Env check
+result = [y for x in os.walk(django_dir) for y in glob(os.path.join(x[0], 'bin/activate'))]
+if result:
+    print(result[0].rsplit('/',1))
+    os.system(f'{result[0].rsplit("/",1)[0]}/python3 form-data-generator.py')
+else:
+    print("Virtual environment not found. Please check if your project has vitrual environment configured")

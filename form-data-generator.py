@@ -9,9 +9,12 @@ def get_django_project_dir():
     root_dir = os.getcwd().rsplit('/',1)[0]
     django_dir = None
     for dir in os.listdir(root_dir):
-        if 'manage.py' in os.listdir(f"{root_dir}/{dir}"):
-            django_dir = f"{root_dir}/{dir}"
-            break
+        try:
+            if 'manage.py' in os.listdir(f"{root_dir}/{dir}"):
+                django_dir = f"{root_dir}/{dir}"
+                break
+        except NotADirectoryError:
+            pass
     return django_dir
 
 #SQLite DB SETUP
