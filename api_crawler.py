@@ -26,8 +26,15 @@ class API:
         for path in self.url_paths:
             file = open(path,'r')
             for line in file.readlines():
+                line = line.replace("\n","")
                 if re.search("name=",line):
                     f_line = line.split('name=')[1].replace("'",'"').split('"')[1]
-                    processed_namespaces.append(reverse(f"v1:{f_line}"))
+                    try:
+                        processed_namespaces.append(reverse(f"v1:{f_line}"))
+                    except:
+                        print(re.search("<[a-z]*[:]",line) or re.search("<[a-z]*>",line))
+                        print(line)
+                        pass
+        print(processed_namespaces)
         return processed_namespaces
 
