@@ -17,11 +17,9 @@
             <li class="nav-item">
               <a class="nav-link" href="#">Home</a>
             </li>
-            {% for item in menu_data %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/{{item|lower}}.html">{{item}}</a>
-                </li>
-            {% endfor %}
+            <li class="nav-item">
+              <a class="nav-link" href="#">Api</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Settings</a>
             </li>
@@ -38,7 +36,28 @@
 <!--    </div>-->
 
     <div class="container">
+      <h1>Django Models To FormData</h1>
+        <ul class="nav nav-tabs">
+          {% for model in model_data %}
+            {% if forloop.first %}
+              <li><a class="nav-link active" href="#{{model}}" data-toggle="tab">{{model}}</a></li>
+            {% else %}
+              <li><a class="nav-link" href="#{{model}}" data-toggle="tab">{{model}}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
 
+        <div class="tab-content">
+          {% for key,value in model_data.items %}
+            {% if forloop.first %}
+              <div class="tab-pane active" id="{{key}}"><pre style=
+        "color:green; font-size: 20px; font-weight: bold;">{{value|safe}}</pre></div>
+            {% else %}
+              <div class="tab-pane" id="{{key}}"><pre style=
+        "color:green; font-size: 20px; font-weight: bold;">{{value|safe}}</pre></div>
+            {% endif %}
+          {% endfor %}
+        </div>
     </div>
 
 

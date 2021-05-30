@@ -18,7 +18,6 @@ if django_dir == None:
 #Virtual Env check
 result = [y for x in os.walk(django_dir) for y in glob(os.path.join(x[0], 'bin/activate'))]
 if result:
-    print(result[0].rsplit('/',1))
-    os.system(f'{result[0].rsplit("/",1)[0]}/python3 form-data-generator.py')
+    os.system(f'{result[0].rsplit("/",1)[0]}/python3 main.py')
 else:
     print("Virtual environment not found. Please check if your project has vitrual environment configured")
