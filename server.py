@@ -12,7 +12,7 @@ class Server(BaseHTTPRequestHandler):
     def do_GET(self):
         global mimetype
         if self.path == "/":
-            self.path = "/index.html"
+            self.path = "/main.html"
 
         try:
 
