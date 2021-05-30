@@ -10,7 +10,7 @@ class TemplateManager():
         pass
 
     def generate_index(self,menu_data):
-        html_template_file = open("template/index.html", "r")
+        html_template_file = open("template/main.html", "r")
         body_template_html = Template(html_template_file.read())
         context_data = Context({'menu_data':menu_data})
         body_template_html = body_template_html.render(context_data)
