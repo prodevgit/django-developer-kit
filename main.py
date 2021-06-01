@@ -19,7 +19,9 @@ try:
     template_manager.make_template()
 
     api = API(cf)
-    # api.get_url_paths()
+    urls = api.get_urls()
+
+    print(urls)
 
     start_server()
 except ModuleNotFoundError:
